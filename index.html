@@ -676,6 +676,45 @@ nav.scrolled {
 .events-overlay.active .event-card:nth-child(5) { transition-delay: 0.5s; }
 .events-overlay.active .event-card:nth-child(6) { transition-delay: 0.6s; }
 .events-overlay.active .event-card:nth-child(7) { transition-delay: 0.7s; }
+.events-overlay.active .event-card:nth-child(8) { transition-delay: 0.9s; }
+
+/* TW Cup VII — calm materialize animation */
+.event-card.card-materialize {
+  opacity: 0;
+  transform: scale(1.08);
+  filter: blur(12px);
+  transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s, box-shadow 0.3s;
+}
+.events-overlay.active .event-card.card-materialize {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+.event-card.card-materialize::before {
+  background: linear-gradient(90deg, #ffd54f, #ff8a65, #ffd54f);
+  background-size: 200% 100%;
+  animation: shimmer-bar 2.5s ease-in-out infinite;
+}
+@keyframes shimmer-bar {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.event-card.card-materialize .winner-name {
+  opacity: 0;
+  transform: translateY(8px);
+  filter: blur(6px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.event-card.card-materialize .winner-name.show {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
 
 .event-card .event-icon { font-size: 2rem; margin-bottom: 14px; }
 
@@ -2172,6 +2211,15 @@ footer { border-top: 1px solid var(--border); padding: 60px 48px 40px; }
         <div class="winner-name" data-winner>eSports Only</div>
       </div>
     </div>
+    <div class="event-card card-materialize">
+      <div class="event-icon">🏆</div>
+      <div class="event-name">TW Cup VII</div>
+      <div class="event-date">Season 7</div>
+      <div class="event-winner-wrap">
+        <div class="winner-label">Winner</div>
+        <div class="winner-name" data-winner data-coming-soon>Coming soon</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3036,7 +3084,7 @@ function openEventsOverlay() {
   document.body.style.overflow = 'hidden';
   eventsOverlay.scrollTop = 0;
   // Animate winners one by one
-  const winners = eventsOverlay.querySelectorAll('[data-winner]');
+  const winners = eventsOverlay.querySelectorAll('[data-winner]:not([data-coming-soon])');
   winners.forEach(w => w.classList.remove('show'));
   let i = 0;
   function showNext() {
@@ -3047,6 +3095,12 @@ function openEventsOverlay() {
     }
   }
   eventsWinnerTimeout = setTimeout(showNext, 800);
+  // "Coming soon" on materialize card: reveal after card fully appears
+  const comingSoon = eventsOverlay.querySelector('[data-coming-soon]');
+  if (comingSoon) {
+    comingSoon.classList.remove('show');
+    setTimeout(() => comingSoon.classList.add('show'), 2600);
+  }
 }
 
 function closeEventsOverlay() {
